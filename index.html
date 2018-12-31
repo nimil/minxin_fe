@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="css/header.css"/>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+		mui.plusReady(function(){
+			plus.navigator.setStatusBarStyle("light");
+			plus.navigator.setStatusBarBackground("#2AC845");
+		});
+    </script>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav title">
+		<h1 class="mui-title title-color"><b>MinChat</b></h1>
+	</header>
+	
+	
+	<nav class="mui-bar mui-bar-tab">
+		<a class="mui-tab-item mui-active" tabindex="0">
+			<span class="mui-icon mui-icon-weixin"></span>
+			<span class="mui-tab-label">MinChat</span>
+		</a>
+		<a class="mui-tab-item" tabindex="1">
+			<span class="mui-icon mui-icon-phone" ></span>
+			<span class="mui-tab-label">通讯录</span>
+		</a>
+		<a class="mui-tab-item" tabindex="2">
+			<span class="mui-icon mui-icon-contact"></span>
+			<span class="mui-tab-label">发现</span>
+		</a>
+		<a class="mui-tab-item" tabindex="3">
+			<span class="mui-icon mui-icon-person"></span>
+			<span class="mui-tab-label">我的</span>
+		</a>
+	</nav>
+	<script type="text/javascript" charset="utf-8">
+		
+		var minxinArray=[
+			{
+				pageId: "MinChat.html",
+				pageUrl: "MinChat.html"
+			},
+			{
+				pageId: "MinChat-2.html",
+				pageUrl: "MinChat-2.html"
+			},
+			{
+				pageId: "MinChat-3.html",
+				pageUrl: "MinChat-3.html"
+			},
+			{
+				pageId: "MinChat-4.html",
+				pageUrl: "MinChat-4.html"
+			}
+		];
+		
+		var minxinStyle = {
+			top:"44px",
+			bottom:"50px"
+			
+		}
+		
+		
+		mui.plusReady(function(){
+		  
+			//禁止返回到登录注册页面
+			mui.back = function(){
+				return false;
+			}
+			
+		  //获取当前的webview对象
+		  var indexWebView = plus.webview.currentWebview();
+		  
+		  //向当前主页的webview追加子页的四张对象
+		  for(var i=0;i<minxinArray.length;i++){
+			 var minxinPage = plus.webview.create(minxinArray[i].pageUrl,minxinArray[i].pageId,minxinStyle);
+			 minxinPage.hide(); 
+			 indexWebView.append(minxinPage);
+		  }
+		  plus.webview.show(minxinArray[0].pageId);
+		
+			//批量绑定tap事件展示不同的页面
+			mui(".mui-bar-tab").on("tap","a",function(){
+				var tabindex = this.getAttribute("tabindex");
+				plus.webview.show(minxinArray[tabindex].pageId,"fade-in",200);
+				
+			});
+			
+			//批量绑定tap事件展示不同的页面
+			mui(".mui-bar-tab").on("tap","a",function(){
+				var tabindex = this.getAttribute("tabindex");
+				plus.webview.show(minxinArray[tabindex].pageId,"fade-in",200);
+				for(var i = 0; i<minxinArray.length;i++){
+					if(i!=tabindex){
+						plus.webview.hide(minxinArray[i].pageId,"fade-out",200);
+					}
+				}
+				
+			})
+		
+			setTimeout("initData()",1000);
+					
+		
+		});
+		
+		function initData(){
+			var minxin_chatlist = plus.webview.getWebviewById("MinChat.html");
+			mui.fireEvent(minxin_chatlist,"refresh");
+			
+			var minxin_me = plus.webview.getWebviewById("MinChat-4.html");
+			mui.fire(minxin_me,"refresh");
+		
+		}
+		
+		
+		
+		
+	</script>
+	
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/header.css">
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav title">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<a   id="openMenu" class="mui-icon mui-icon-right-nav mui-pull-right" style="color: white;">...</a>
+			
+			<h1 class="mui-title title-color" >个人头像</h1>
+		</header>
+		
+		<div class="mui-content">
+			<img  id="img_face" src="css/registLogin/xiaoxin.jpg" />
+		</div>
+		
+		<div  id="sheetMyFace" class="mui-popover mui-popover-bottom mui-popover-action ">
+			<!-- 可选择菜单 -->
+			<ul class="mui-table-view">
+			  <li class="mui-table-view-cell">
+				<a id="link_choosePhoto" href="#">选择照片</a>
+			  </li>
+			  <li class="mui-table-view-cell">
+				<a id="load_photo" href="#">下载照片</a>
+			  </li>
+			</ul>
+			<!-- 取消菜单 -->
+			  <li class="mui-table-view-cell">
+			<ul class="mui-table-view">
+				<a href="#sheetMyFace"><b>取消</b></a>
+			  </li>
+			</ul>
+		</div>
+	
+		
+		
+		<script src="js/mui.js"></script>
+		<script src="js/app.js" type="text/javascript" charset="utf-8"></script>
+		
+		
+		<script type="text/javascript">
+			mui.init()
+			
+			mui.plusReady(function(){
+				refreshFace();
+				var user = app.getUserGlobalInfo();
+				var img_myface = document.getElementById("img_face");
+				
+				window.addEventListener("refresh",function(){
+					refreshFace();
+				});
+				
+			
+				
+				var openMenu = document.getElementById("openMenu");
+				openMenu.addEventListener("tap",function(){
+					mui("#sheetMyFace").popover("toggle");
+				});
+				
+				
+				var linkChoosePhoto = document.getElementById("link_choosePhoto");
+				linkChoosePhoto.addEventListener("tap",function(){
+					mui.openWindow({url:"plugin/v3.1.6/myface-uploader.html",id:"upload.html",createNew:true});
+						mui("#sheetMyFace").popover("toggle");
+				});
+				
+				var loadPhoto = document.getElementById("load_photo");
+				loadPhoto.addEventListener("tap",function(){
+					plus.nativeUI.showWaiting("下载中。。。");
+					
+					var faceImage = user.faceImageBig;
+					var dtest = plus.downloader.createDownload(
+						app.imgServerUrl+faceImage,
+						{},
+						function(downloadFile,status){
+							plus.nativeUI.closeWaiting();
+							if(status == 200){
+								var tempFile = downloadFile.filename;
+							    //通过相册api保存照片到本地
+								plus.gallery.save(tempFile,function(){
+									app.showToast("保存照片成功。。。","success");
+								})
+							}else{
+								console.log("下载错误。。")
+								app.showToast("下载错误","error")
+							}
+							
+						}
+					);
+					
+					dtest.start();
+					
+				});
+				
+				function refreshFace(){
+					var user = app.getUserGlobalInfo();
+					var img_myface = document.getElementById("img_face");
+					
+					
+					if(user!=null){
+						var faceimg = user.faceImage;
+						if(app.isNotNull(faceimg)){
+							img_myface.src = app.imgServerUrl + faceimg;
+						}
+						var imgWidth = document.body.clientWidth;
+						img_myface.width = imgWidth;
+						img_myface.height = imgWidth;
+					}
+				};
+				
+			});
+			
+		</script>
+	</body>
+
+</html>
